@@ -1,13 +1,13 @@
 # ARCHITECTURE OVERVIEW
 
-The __forgepack-ARTIFACT__ is a Spring Boot auto-configuration library structured around a clear separation between public API and private implementation.
+The __forgepack-authentication__ is a Spring Boot auto-configuration library structured around a clear separation between public API and private implementation.
 
 ## 1. PACKAGE STRUCTURE
 
 | Package        | Path                                          | Responsibility                                                                  |
 |:---------------|:----------------------------------------------|:--------------------------------------------------------------------------------|
-| __api__        | `dev.forgepack.ARTIFACT.api`            | Public contracts: interfaces, annotations, `@ConfigurationProperties`, records. |
-| __internal__   | `dev.forgepack.ARTIFACT.internal`       | Private implementation: beans, services, and auto-configuration classes.        |
+| __api__        | `dev.forgepack.authentication.api`            | Public contracts: interfaces, annotations, `@ConfigurationProperties`, records. |
+| __internal__   | `dev.forgepack.authentication.internal`       | Private implementation: beans, services, and auto-configuration classes.        |
 
 > **Rule:** Consumers should only reference types in `api`. The `internal` package is an implementation detail and may change between minor versions without notice.
 
@@ -38,7 +38,7 @@ The main auto-configuration class is registered there and is discovered automati
 ### 3.2. Configuration Properties
 All configurable values are bound through a strongly-typed properties class prefixed with:
 ```properties
-forgepack.ARTIFACT.*
+forgepack.authentication.*
 ```
 
 ### 3.3. `@ConditionalOnMissingBean`

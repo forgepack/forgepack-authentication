@@ -9,11 +9,11 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>dev.forgepack</groupId>
-	<artifactId>forgepack-ARTIFACT</artifactId>
+	<artifactId>forgepack-authentication</artifactId>
 	<version>0.0.1</version>
-	<name>Maven Library</name>
-	<description>Project for Spring Boot library</description>
-	<url>https://github.com/orgs/forgepack/forgepack-ARTIFACT</url>
+	<name>Forgepack Authentication Library</name>
+	<description>Authentication flow: login, logout, refresh token, password change, TOTP/2FA</description>
+	<url>https://github.com/orgs/forgepack/forgepack-authentication</url>
 	<licenses>
 		<license>
 			<name>MIT License</name>
@@ -33,31 +33,19 @@
 		</developer>
 	</developers>
 	<scm>
-		<connection>scm:git:git://github.com/forgepack/forgepack-ARTIFACT.git</connection>
-		<developerConnection>scm:git:ssh://github.com:forgepack/forgepack-ARTIFACT.git</developerConnection>
-		<url>https://github.com/forgepack/forgepack-ARTIFACT</url>
+		<connection>scm:git:git://github.com/forgepack/forgepack-authentication.git</connection>
+		<developerConnection>scm:git:ssh://github.com:forgepack/forgepack-authentication.git</developerConnection>
+		<url>https://github.com/forgepack/forgepack-authentication</url>
 		<tag/>
 	</scm>
 	<properties>
 		<java.version>25</java.version>
-		<jacoco.version>0.8.15</jacoco.version>
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jacoco</groupId>
-			<artifactId>jacoco-maven-plugin</artifactId>
-			<version>${jacoco.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.plexus</groupId>
-			<artifactId>plexus-utils</artifactId>
-			<version>4.0.3</version>
+			<groupId>dev.forgepack</groupId>
+			<artifactId>forgepack-core</artifactId>
+			<version>0.0.3</version>
 		</dependency>
 	</dependencies>
 
@@ -118,51 +106,6 @@
 						<goals>
 							<goal>sign</goal>
 						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- JaCoCo Plugin (Code Coverage) -->
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>post-integration-test</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>check</id>
-						<goals>
-							<goal>check</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<rule>
-									<element>BUNDLE</element>
-									<limits>
-										<limit>
-											<counter>LINE</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>0.15</minimum>
-										</limit>
-										<limit>
-											<counter>BRANCH</counter>
-											<value>COVEREDRATIO</value>
-											<minimum>0.80</minimum>
-										</limit>
-									</limits>
-								</rule>
-							</rules>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
