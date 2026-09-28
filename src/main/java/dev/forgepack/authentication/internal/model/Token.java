@@ -1,6 +1,6 @@
 package dev.forgepack.authentication.internal.model;
 
-import dev.forgepack.core.internal.model.GenericAuditEntity;
+import dev.forgepack.core.api.model.EntityCrud;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.util.UUID;
@@ -33,7 +33,7 @@ import java.util.UUID;
  *
  * <h3>Auditing</h3>
  * <p>Auditing is enabled via {@link org.hibernate.envers.Audited},
- * inheriting lifecycle metadata from {@link GenericAuditEntity}.</p>
+ * inheriting lifecycle metadata from {@link EntityCrud}.</p>
  *
  * <h3>Architectural Notes</h3>
  * <ul>
@@ -45,11 +45,11 @@ import java.util.UUID;
  * @version 1.0
  * @since 1.0
  *
- * @see GenericAuditEntity
+ * @see EntityCrud
  */
 @Entity
 @Table
-public class Token extends GenericAuditEntity {
+public class Token extends EntityCrud {
 
     private UUID refreshToken;
     private boolean active;

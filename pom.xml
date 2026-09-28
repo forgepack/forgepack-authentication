@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.forgepack</groupId>
 	<artifactId>forgepack-authentication</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.3</version>
 	<name>Forgepack Authentication Library</name>
 	<description>Authentication flow: login, logout, refresh token, password change, TOTP/2FA</description>
 	<url>https://github.com/orgs/forgepack/forgepack-authentication</url>
@@ -42,11 +42,29 @@
 		<java.version>25</java.version>
 	</properties>
 	<dependencies>
+		<!-- Forgepack: basic -->
 		<dependency>
 			<groupId>dev.forgepack</groupId>
 			<artifactId>forgepack-core</artifactId>
-			<version>0.0.3</version>
+			<version>0.0.23</version>
 		</dependency>
+		<!-- Forgepack: security -->
+		<!-- <dependency>
+			<groupId>dev.forgepack</groupId>
+			<artifactId>forgepack-security</artifactId>
+			<version>0.0.5</version>
+		</dependency> -->
+		<!-- Forgepack: authorization	 -->
+		<dependency>
+			<groupId>dev.forgepack</groupId>
+			<artifactId>forgepack-authorization</artifactId>
+			<version>0.0.4</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>

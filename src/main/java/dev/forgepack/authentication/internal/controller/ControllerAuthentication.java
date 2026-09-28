@@ -2,10 +2,10 @@ package dev.forgepack.authentication.internal.controller;
 
 import dev.forgepack.authentication.internal.payload.DTORequestToken;
 import dev.forgepack.authentication.internal.payload.DTOResponseToken;
-import dev.forgepack.authorization.internal.payload.DTOResponseUser;
-import dev.forgepack.authorization.internal.payload.DTORequestUserAuth;
-import dev.forgepack.authorization.internal.service.ServiceAuthenticationImpl;
+import dev.forgepack.authentication.internal.service.ServiceAuthenticationImpl;
+import dev.forgepack.authentication.internal.payload.DTORequestUserAuth;
 import dev.forgepack.authorization.internal.service.ServiceUser;
+import dev.forgepack.authorization.internal.payload.DTOResponseUser;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -90,7 +90,7 @@ public class ControllerAuthentication {
     @PutMapping("/changePassword")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER')")
     public ResponseEntity<DTOResponseUser> changePassword(@RequestBody @Valid DTORequestUserAuth updated){
-        return ResponseEntity.accepted().body(serviceUser.changePassword(updated));
+        return ResponseEntity.accepted().body(serviceAuthenticationImpl.changePassword(updated));
     }
     /**
      * Resets the password of the user identified by the provided username.
@@ -101,7 +101,7 @@ public class ControllerAuthentication {
     @PutMapping("/resetPassword")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER', 'VIEWER')")
     public ResponseEntity<DTOResponseUser> resetPassword(@RequestBody DTORequestUserAuth updated) {
-        return ResponseEntity.accepted().body(serviceUser.resetPassword(updated.username()));
+        return ResponseEntity.accepted().body(serviceAuthenticationImpl.resetPassword(updated.username()));
     }
     /**
      * Resets the two-factor authentication secret of the user identified by the provided username.
@@ -112,6 +112,6 @@ public class ControllerAuthentication {
     @PutMapping("/resetSecret")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER', 'VIEWER')")
     public ResponseEntity<DTOResponseUser> resetSecret(@RequestBody DTORequestUserAuth updated) {
-        return ResponseEntity.accepted().body(serviceUser.resetSecret(updated.username()));
+        return ResponseEntity.accepted().body(serviceAuthenticationImpl.resetSecret(updated.username()));
     }
 }
