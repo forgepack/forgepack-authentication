@@ -13,7 +13,7 @@ import dev.forgepack.authorization.internal.payload.DTORequestUser;
 import dev.forgepack.authorization.internal.payload.DTOResponseUser;
 import dev.forgepack.authorization.internal.repository.RepositoryRole;
 import dev.forgepack.authorization.internal.repository.RepositoryUser;
-import dev.forgepack.authorization.internal.service.ServiceCustomUserDetails;
+// import dev.forgepack.authorization.internal.service.ServiceCustomUserDetails;
 import dev.forgepack.authentication.internal.payload.DTORequestToken;
 import dev.forgepack.authentication.internal.payload.DTORequestUserAuth;
 import dev.forgepack.authentication.internal.payload.DTOResponseToken;

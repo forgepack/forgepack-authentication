@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.forgepack</groupId>
 	<artifactId>forgepack-authentication</artifactId>
-	<version>0.0.3</version>
+	<version>0.0.4</version>
 	<name>Forgepack Authentication Library</name>
 	<description>Authentication flow: login, logout, refresh token, password change, TOTP/2FA</description>
 	<url>https://github.com/orgs/forgepack/forgepack-authentication</url>
@@ -40,31 +40,51 @@
 	</scm>
 	<properties>
 		<java.version>25</java.version>
+        <caffeine.version>3.2.4</caffeine.version>
+		<jjwt.version>0.13.0</jjwt.version>
 	</properties>
 	<dependencies>
-		<!-- Forgepack: basic -->
-		<dependency>
-			<groupId>dev.forgepack</groupId>
-			<artifactId>forgepack-core</artifactId>
-			<version>0.0.23</version>
-		</dependency>
-		<!-- Forgepack: security -->
-		<!-- <dependency>
-			<groupId>dev.forgepack</groupId>
-			<artifactId>forgepack-security</artifactId>
-			<version>0.0.5</version>
-		</dependency> -->
 		<!-- Forgepack: authorization	 -->
 		<dependency>
 			<groupId>dev.forgepack</groupId>
 			<artifactId>forgepack-authorization</artifactId>
-			<version>0.0.4</version>
+			<version>0.0.7</version>
 		</dependency>
 		
 		<dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
+
+		<!-- ===== RATE LIMITING ===== -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+            <version>${caffeine.version}</version>
+        </dependency>
+
+		<!-- Security: jwt -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
