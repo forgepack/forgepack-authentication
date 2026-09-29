@@ -42,13 +42,14 @@
 		<java.version>25</java.version>
         <caffeine.version>3.2.4</caffeine.version>
 		<jjwt.version>0.13.0</jjwt.version>
+		<jacoco.version>0.8.15</jacoco.version>
 	</properties>
 	<dependencies>
 		<!-- Forgepack: authorization	 -->
 		<dependency>
 			<groupId>dev.forgepack</groupId>
 			<artifactId>forgepack-authorization</artifactId>
-			<version>0.0.7</version>
+			<version>0.0.8</version>
 		</dependency>
 		
 		<dependency>
@@ -84,6 +85,12 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>${jjwt.version}</version>
 			<scope>runtime</scope>
+		</dependency>
+		<!-- Test: open source testing framework -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
