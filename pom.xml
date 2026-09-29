@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.forgepack</groupId>
 	<artifactId>forgepack-authentication</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 	<name>Forgepack Authentication Library</name>
 	<description>Authentication flow: login, logout, refresh token, password change, TOTP/2FA</description>
 	<url>https://github.com/orgs/forgepack/forgepack-authentication</url>
