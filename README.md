@@ -182,7 +182,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
 
-<div style="text-align: center;">
+<div align="center">
 
 __⭐ Did you like the project? Leave a star! ⭐__
 
