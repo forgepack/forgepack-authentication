@@ -6,7 +6,7 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/forgepack/forgepack-authentication)
 ![Maven Central](https://img.shields.io/maven-central/v/dev.forgepack/authentication)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Test Coverage](https://img.shields.io/badge/coverage-0%25-red)
+![Test Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
 
 ## Tech Stack
 ![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk)
@@ -80,18 +80,30 @@ Internal implementation details are encapsulated in `dev.forgepack.authenticatio
 
 ### 4.1. Current Coverage Metrics
 
-GENERAL COVERAGE: 0%
-TOTAL NUMBER OF TESTS: 0
+_Measured with JaCoCo (`mvn clean test jacoco:report`) against `src/main/java`._
 
-| Package                                              | Coverage |        |
-|:-----------------------------------------------------|:--------:|:------:|
-| 📁 dev.forgepack.authentication.api                  |    0%    |   🔴   |
-| 📁 dev.forgepack.authentication.internal             |    0%    |   🔴   |
+GENERAL COVERAGE (lines): 90%
+BRANCH COVERAGE: 86%
+INSTRUCTION COVERAGE: 88%
+TOTAL NUMBER OF TESTS: 85
+
+| Package                                                       | Coverage |        |
+|:---------------------------------------------------------------|:--------:|:------:|
+| 📁 dev.forgepack.authentication.api                             |   n/a¹   |   ⚪   |
+| 📁 dev.forgepack.authentication.internal.configuration          |   95%    |   🟢   |
+| 📁 dev.forgepack.authentication.internal.configuration.filter   |   100%   |   🟢   |
+| 📁 dev.forgepack.authentication.internal.controller             |   100%   |   🟢   |
+| 📁 dev.forgepack.authentication.internal.mapper                 |   100%   |   🟢   |
+| 📁 dev.forgepack.authentication.internal.model                  |   84%    |   🟢   |
+| 📁 dev.forgepack.authentication.internal.payload                |   100%   |   🟢   |
+| 📁 dev.forgepack.authentication.internal.service                |   85%    |   🟢   |
+| 📁 dev.forgepack.authentication.internal.utils                  |   92%    |   🟢   |
+
+¹ `api` contains only interface declarations (no executable bytecode to instrument).
 
 ### 4.2. Types of Tests Implemented
-1. __Unit Tests__: Service and component layer
-2. __Integration Tests__: Spring context loading via `@SpringBootTest`
-3. __Auto-Configuration Tests__: `ApplicationContextRunner` scenarios
+1. __Unit Tests (JUnit 5 + Mockito)__: services, controllers, mappers, JWT configuration/filter, cache configuration, models, DTOs and utilities, covering success paths, validation failures and exception handling
+2. __Property/Record Tests__: configuration records (`JwtProperties`, `CacheProperties`) and payload records validating defaults, constraints and derived behavior
 
 ### 4.3. Running Tests
 ```bash
