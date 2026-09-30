@@ -1,12 +1,12 @@
+<div align="center">
+
 # _forgepack-authentication_
+
 [![GitHub stars](https://img.shields.io/github/stars/forgepack/forgepack-authentication?style=social)](https://github.com/forgepack/forgepack-authentication)
 [![GitHub forks](https://img.shields.io/github/forks/forgepack/forgepack-authentication?style=social)](https://github.com/forgepack/forgepack-authentication/fork)
 [![GitHub watchers](https://img.shields.io/github/watchers/forgepack/forgepack-authentication?style=social)](https://github.com/forgepack/forgepack-authentication)
 
-![GitHub last commit](https://img.shields.io/github/last-commit/forgepack/forgepack-authentication)
-![Maven Central](https://img.shields.io/maven-central/v/dev.forgepack/authentication)
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![Test Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
+</div>
 
 ## Tech Stack
 ![Java](https://img.shields.io/badge/Java-25-orange?logo=openjdk)
@@ -14,6 +14,10 @@
 ![Maven](https://img.shields.io/badge/Maven-3.8+-blue?logo=apachemaven)
 
 ## Description
+![GitHub last commit](https://img.shields.io/github/last-commit/forgepack/forgepack-authentication)
+![Maven Central](https://img.shields.io/maven-central/v/dev.forgepack/authentication)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![Test Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
 
 _forgepack-authentication_ is a Spring Boot auto-configuration library that {DESCRIPTION}.
 
