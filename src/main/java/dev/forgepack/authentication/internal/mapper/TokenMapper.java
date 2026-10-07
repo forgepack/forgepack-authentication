@@ -2,19 +2,19 @@ package dev.forgepack.authentication.internal.mapper;
 
 import dev.forgepack.core.api.mapper.Mapper;
 import dev.forgepack.authentication.internal.model.Token;
-import dev.forgepack.authentication.internal.payload.DTORequestToken;
-import dev.forgepack.authentication.internal.payload.DTOResponseToken;
+import dev.forgepack.authentication.internal.payload.TokenRequest;
+import dev.forgepack.authentication.internal.payload.TokenResponse;
 import org.springframework.stereotype.Component;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public final class MapperToken implements Mapper<Token, DTORequestToken, DTOResponseToken> {
+public final class TokenMapper implements Mapper<Token, TokenRequest, TokenResponse> {
 
-    private MapperToken() {}
+    private TokenMapper() {}
 
     @Override
-    public Token toEntity(DTORequestToken dto) {
+    public Token toEntity(TokenRequest dto) {
         if (dto == null) return null;
         return new Token(
                 dto.refreshToken()
@@ -22,21 +22,21 @@ public final class MapperToken implements Mapper<Token, DTORequestToken, DTOResp
     }
 
     @Override
-    public DTOResponseToken toResponse(Token entity) {
+    public TokenResponse toResponse(Token entity) {
         if (entity == null) return null;
-        return new DTOResponseToken(
+        return new TokenResponse(
                 entity.getId()
         );
     }
 
     @Override
-    public void updateEntity(DTORequestToken dto, Token entity) {
+    public void updateEntity(TokenRequest dto, Token entity) {
         if (dto == null || entity == null) return;
         entity.setRefreshToken(dto.refreshToken());
     }
 
     @Override
-    public Set<DTOResponseToken> toResponseSet(Set<Token> entities) {
+    public Set<TokenResponse> toResponseSet(Set<Token> entities) {
         if (entities == null) return Set.of();
         return entities.stream()
                 .map(this::toResponse)

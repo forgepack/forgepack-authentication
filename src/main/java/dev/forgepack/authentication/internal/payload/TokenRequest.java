@@ -55,7 +55,7 @@ import java.util.UUID;
  *
  * @see DTOIdentifiable
  */
-public record DTORequestToken (
+public record TokenRequest(
 
         UUID id,
         String tokenType,
@@ -64,7 +64,7 @@ public record DTORequestToken (
         UUID refreshToken
 ) implements DTOIdentifiable<UUID> {
 
-    public DTORequestToken(UUID id, String accessToken, UUID refreshToken) {
+    public TokenRequest(UUID id, String accessToken, UUID refreshToken) {
         this(id, "Bearer ", accessToken, refreshToken);
     }
 }

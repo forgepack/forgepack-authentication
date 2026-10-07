@@ -6,13 +6,13 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DTORequestTokenTest {
+class TokenRequestTest {
 
     @Test
     void fullConstructor_setsAllFields() {
         UUID id = UUID.randomUUID();
         UUID refreshToken = UUID.randomUUID();
-        DTORequestToken dto = new DTORequestToken(id, "Custom ", "access-token", refreshToken);
+        TokenRequest dto = new TokenRequest(id, "Custom ", "access-token", refreshToken);
 
         assertThat(dto.id()).isEqualTo(id);
         assertThat(dto.tokenType()).isEqualTo("Custom ");
@@ -24,7 +24,7 @@ class DTORequestTokenTest {
     void convenienceConstructor_defaultsToBearerTokenType() {
         UUID id = UUID.randomUUID();
         UUID refreshToken = UUID.randomUUID();
-        DTORequestToken dto = new DTORequestToken(id, "access-token", refreshToken);
+        TokenRequest dto = new TokenRequest(id, "access-token", refreshToken);
 
         assertThat(dto.tokenType()).isEqualTo("Bearer ");
         assertThat(dto.accessToken()).isEqualTo("access-token");

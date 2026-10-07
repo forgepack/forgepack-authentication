@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.forgepack</groupId>
 	<artifactId>forgepack-authentication</artifactId>
-	<version>0.0.5</version>
+	<version>0.0.6</version>
 	<name>Forgepack Authentication Library</name>
 	<description>Authentication flow: login, logout, refresh token, password change, TOTP/2FA</description>
 	<url>https://github.com/orgs/forgepack/forgepack-authentication</url>
@@ -45,12 +45,19 @@
 		<jacoco.version>0.8.15</jacoco.version>
 	</properties>
 	<dependencies>
-		<!-- Forgepack: authorization	 -->
+		<!-- Forgepack: authorization -->
 		<dependency>
 			<groupId>dev.forgepack</groupId>
 			<artifactId>forgepack-authorization</artifactId>
-			<version>0.0.8</version>
+			<version>0.0.12</version>
 		</dependency>
+
+        <!-- Forgepack: authorization -->
+        <dependency>
+            <groupId>dev.forgepack</groupId>
+            <artifactId>forgepack-utils</artifactId>
+            <version>0.0.9</version>
+        </dependency>
 		
 		<dependency>
             <groupId>commons-codec</groupId>

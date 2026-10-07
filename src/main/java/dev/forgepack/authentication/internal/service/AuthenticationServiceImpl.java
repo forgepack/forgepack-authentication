@@ -1,27 +1,26 @@
 package dev.forgepack.authentication.internal.service;
 
 import dev.forgepack.core.api.mapper.Mapper;
-import dev.forgepack.core.api.repository.RepositoryCrud;
-import dev.forgepack.core.internal.service.ServiceCrudRestorableImpl;
-import dev.forgepack.authentication.api.service.ServiceAuthentication;
+import dev.forgepack.authentication.api.service.AuthenticationService;
 import dev.forgepack.authentication.internal.configuration.JwtConfiguration;
 // import dev.forgepack.security.internal.utils.Information;
 import dev.forgepack.authentication.internal.model.Token;
 import dev.forgepack.authorization.internal.model.Role;
 import dev.forgepack.authorization.internal.model.User;
-import dev.forgepack.authorization.internal.payload.DTORequestUser;
-import dev.forgepack.authorization.internal.payload.DTOResponseUser;
-import dev.forgepack.authorization.internal.repository.RepositoryRole;
-import dev.forgepack.authorization.internal.repository.RepositoryUser;
+import dev.forgepack.authorization.internal.payload.UserRequest;
+import dev.forgepack.authorization.internal.payload.UserResponse;
+import dev.forgepack.authorization.internal.repository.RoleRepository;
+import dev.forgepack.authorization.internal.repository.UserRepository;
 // import dev.forgepack.authorization.internal.service.ServiceCustomUserDetails;
-import dev.forgepack.authentication.internal.payload.DTORequestToken;
-import dev.forgepack.authentication.internal.payload.DTORequestUserAuth;
-import dev.forgepack.authentication.internal.payload.DTOResponseToken;
-import dev.forgepack.authentication.internal.repository.RepositoryToken;
-import dev.forgepack.utils.internal.service.ServiceEmailImpl;
-import dev.forgepack.utils.internal.utils.E2EE;
+import dev.forgepack.authentication.internal.payload.TokenRequest;
+import dev.forgepack.authentication.internal.payload.UserAuthRequest;
+import dev.forgepack.authentication.internal.payload.TokenResponse;
+import dev.forgepack.authentication.internal.repository.TokenRepository;
+import dev.forgepack.utils.api.service.EncryptorService;
+import dev.forgepack.utils.internal.service.EmailServiceImpl;
+import dev.forgepack.utils.internal.service.EncryptorServiceImpl;
 import dev.forgepack.utils.internal.utils.QRCode;
-import dev.forgepack.validation.api.service.ServiceUniqueCheckable;
+import dev.forgepack.validation.api.service.UniqueCheckableService;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.commons.codec.binary.Base32;
 import org.slf4j.Logger;
@@ -52,74 +51,74 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, ServiceAuthentication {
+public class AuthenticationServiceImpl implements UniqueCheckableService, AuthenticationService {
 
     //    private final ServiceRecaptcha serviceRecaptcha;
-    private final E2EE e2EE;
+    private final EncryptorService encryptorService;
     private final AuthenticationManager authenticationManager;
     private final JwtConfiguration jwtConfiguration;
-    private final RepositoryToken repositoryToken;
-    private final RepositoryUser repositoryUser;
-    private final RepositoryRole repositoryRole;
+    private final TokenRepository tokenRepository;
+    private final UserRepository userRepository;
+    private final RoleRepository repositoryRole;
     private final PasswordEncoder passwordEncoder;
-    private final ServiceEmailImpl serviceEmail;
-    private final Mapper<Token, DTORequestToken, DTOResponseToken> mapperToken;
-    private final Mapper<User, DTORequestUser, DTOResponseUser> mapperUser;
-    private final ServiceCustomUserDetails serviceCustomUserDetails;
-    private static final Logger log = LoggerFactory.getLogger(ServiceAuthenticationImpl.class);
+    private final EmailServiceImpl emailService;
+    private final Mapper<Token, TokenRequest, TokenResponse> mapperToken;
+    private final Mapper<User, UserRequest, UserResponse> mapperUser;
+    private final CustomUserDetailsService customUserDetailsService;
+    private static final Logger log = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
-    public ServiceAuthenticationImpl(E2EE e2EE, AuthenticationManager authenticationManager, JwtConfiguration jwtConfiguration, RepositoryToken repositoryToken, RepositoryUser repositoryUser, RepositoryRole repositoryRole, PasswordEncoder passwordEncoder, ServiceEmailImpl serviceEmail,Mapper<Token, DTORequestToken, DTOResponseToken> mapperToken, Mapper<User, DTORequestUser, DTOResponseUser> mapperUser, ServiceCustomUserDetails serviceCustomUserDetails) {
-        this.e2EE = e2EE;
+    public AuthenticationServiceImpl(EncryptorService encryptorService, AuthenticationManager authenticationManager, JwtConfiguration jwtConfiguration, TokenRepository tokenRepository, UserRepository userRepository, RoleRepository repositoryRole, PasswordEncoder passwordEncoder, EmailServiceImpl emailService, Mapper<Token, TokenRequest, TokenResponse> mapperToken, Mapper<User, UserRequest, UserResponse> mapperUser, CustomUserDetailsService customUserDetailsService) {
+        this.encryptorService = encryptorService;
         this.authenticationManager = authenticationManager;
         this.jwtConfiguration = jwtConfiguration;
-        this.repositoryToken = repositoryToken;
-        this.repositoryUser = repositoryUser;
+        this.tokenRepository = tokenRepository;
+        this.userRepository = userRepository;
         this.repositoryRole = repositoryRole;
         this.passwordEncoder = passwordEncoder;
-        this.serviceEmail = serviceEmail;
+        this.emailService = emailService;
         this.mapperToken = mapperToken;
         this.mapperUser = mapperUser;
-        this.serviceCustomUserDetails = serviceCustomUserDetails;
+        this.customUserDetailsService = customUserDetailsService;
     }
     
     @Override
-    public DTOResponseToken login(DTORequestUserAuth dtoRequestUserAuth) {
+    public TokenResponse login(UserAuthRequest userAuthRequest) {
         try {
 //            captchaTest(dtoRequestUserAuth.getCaptchaToken());
-            validateTOTP(dtoRequestUserAuth.username(), dtoRequestUserAuth.secret());
-            serviceCustomUserDetails.loadUserByUsername(dtoRequestUserAuth.username());
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(dtoRequestUserAuth.username(), dtoRequestUserAuth.password()));
-            resetAttempts(dtoRequestUserAuth.username());
+            validateTOTP(userAuthRequest.username(), userAuthRequest.secret());
+            customUserDetailsService.loadUserByUsername(userAuthRequest.username());
+            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userAuthRequest.username(), userAuthRequest.password()));
+            resetAttempts(userAuthRequest.username());
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtConfiguration.generateToken(authentication.getName());
             UUID refreshToken = UUID.randomUUID();
-            repositoryToken.save(new Token(refreshToken, true));
-            return new DTOResponseToken(
+            tokenRepository.save(new Token(refreshToken, true));
+            return new TokenResponse(
                     token,
                     refreshToken,
                     authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())
             );
         } catch (BadCredentialsException e) {
-            addAttempt(dtoRequestUserAuth);
+            addAttempt(userAuthRequest);
             throw e;
         }
     }
     // @Override
-    public DTOResponseUser signup(DTORequestUser created){
+    public UserResponse signup(UserRequest created){
         User user = mapperUser.toEntity(created);
         String password = generateSecurePassword();
         String secret = generateSecret();
         try {
             user.setPassword(passwordEncoder.encode(password));
-            user.setSecret(e2EE.encrypt(secret));
+            user.setSecret(encryptorService.encrypt(secret));
             Set<Role> roles = new HashSet<>();
             roles.add(repositoryRole.findByName("VIEWER").orElseThrow(() -> new RuntimeException("Default role VIEWER not found")));
             user.setRole(roles);
             user.setActive(true);
             user.setAttempt(0);
             byte[] qrCodeBytes = QRCode.generateQRCodeBytes(buildSecretUri(user.getUsername(), user.getSecret()), 200);
-            String emailContent = serviceEmail.buildWelcomeEmailContent(user.getUsername(), password, secret);
-            serviceEmail.sendHtmlMessageWithAttachment(user.getEmail(), "Account Created", emailContent, qrCodeBytes, "qrcode.png", "image/png");
+            String emailContent = emailService.buildWelcomeEmailContent(user.getUsername(), password, secret);
+            emailService.sendHtmlMessageWithAttachment(user.getEmail(), "Account Created", emailContent, qrCodeBytes, "qrcode.png", "image/png");
         } catch (MailException e) {
             log.error("Error sending email for {}: {}", user.getUsername(), e.getMessage());
             throw new BadCredentialsException("Failed to send welcome email");
@@ -128,15 +127,15 @@ public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, Servic
             throw new BadCredentialsException("Invalid secret");
         }
         // log.info("{} creating a new user", Information.getCurrentUser().orElse("Unknown User"));
-        return mapperUser.toResponse(repositoryUser.save(user));
+        return mapperUser.toResponse(userRepository.save(user));
     }
-    public DTOResponseUser resetPassword(String username) {
+    public UserResponse resetPassword(String username) {
         User user = isValidToChange(username);
         String password = generateSecurePassword();
         user.setPassword(passwordEncoder.encode(password));
-        repositoryUser.save(user);
+        userRepository.save(user);
         try {
-            serviceEmail.sendSimpleMessage(user.getEmail(), "Password Reset",
+            emailService.sendSimpleMessage(user.getEmail(), "Password Reset",
                     "Hello " + user.getUsername() + ",\n\nYour password has been reset. Your new temporary password is:\n\n" + password + "\n\nPlease change it after logging in.");
         } catch (Exception e) {
             log.error("Failed to send password reset email to {}: {}", user.getEmail(), e.getMessage());
@@ -144,22 +143,22 @@ public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, Servic
         // log.info("{} reset password for user with ID: {}", Information.getCurrentUser().orElse("Unknown User"), user.getId());
         return mapperUser.toResponse(user);
     }
-    public DTOResponseUser changePassword(DTORequestUserAuth updated){
+    public UserResponse changePassword(UserAuthRequest updated){
         User user = isValidToChange(updated.id());
         Objects.requireNonNull(user).setPassword(passwordEncoder.encode(updated.password()));
-        repositoryUser.save(user);
+        userRepository.save(user);
         // log.info("{} changing user password with ID: {}", Information.getCurrentUser().orElse("Unknown User"), user.getId());
         return mapperUser.toResponse(user);
     }
-    public DTOResponseUser resetSecret(String username) {
+    public UserResponse resetSecret(String username) {
         User user = isValidToChange(username);
         String secret = generateSecret();
         try {
-            user.setSecret(e2EE.encrypt(secret));
-            repositoryUser.save(user);
+            user.setSecret(encryptorService.encrypt(secret));
+            userRepository.save(user);
             byte[] qrCodeBytes = QRCode.generateQRCodeBytes(buildSecretUri(user.getUsername(), user.getSecret()), 200);
-            String emailContent = serviceEmail.buildWelcomeEmailContent(user.getUsername(), "Your password is the same as before", secret);
-            serviceEmail.sendHtmlMessageWithAttachment(user.getEmail(), "Reset TOTP requested", emailContent, qrCodeBytes, "qrcode.png", "image/png");
+            String emailContent = emailService.buildWelcomeEmailContent(user.getUsername(), "Your password is the same as before", secret);
+            emailService.sendHtmlMessageWithAttachment(user.getEmail(), "Reset TOTP requested", emailContent, qrCodeBytes, "qrcode.png", "image/png");
             // log.info("{} resetting user secret with ID: {}", Information.getCurrentUser().orElse("Unknown User"), user.getId());
             return mapperUser.toResponse(user);
         } catch (Exception e) {
@@ -167,25 +166,25 @@ public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, Servic
         }
     }
     @Override
-    public DTOResponseToken refresh(DTORequestToken dtoRequestToken) {
-        if (repositoryToken.existsByRefreshToken(dtoRequestToken.refreshToken()) &&
-                jwtConfiguration.validateJwt(dtoRequestToken.accessToken())) {
-            UserDetails userDetails = serviceCustomUserDetails.loadUserByUsername(
-                    jwtConfiguration.getUsernameFromJwt(dtoRequestToken.accessToken())
+    public TokenResponse refresh(TokenRequest tokenRequest) {
+        if (tokenRepository.existsByRefreshToken(tokenRequest.refreshToken()) &&
+                jwtConfiguration.validateJwt(tokenRequest.accessToken())) {
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(
+                    jwtConfiguration.getUsernameFromJwt(tokenRequest.accessToken())
             );
-            String tokenResponse = jwtConfiguration.generateToken(jwtConfiguration.getUsernameFromJwt(dtoRequestToken.accessToken()));
+            String tokenResponse = jwtConfiguration.generateToken(jwtConfiguration.getUsernameFromJwt(tokenRequest.accessToken()));
             Set<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet());
-            return new DTOResponseToken(tokenResponse, dtoRequestToken.refreshToken(), roles);
+            return new TokenResponse(tokenResponse, tokenRequest.refreshToken(), roles);
         } else {
-            logout(dtoRequestToken.refreshToken());
+            logout(tokenRequest.refreshToken());
             throw new BadCredentialsException("Invalid or expired token. Please log in again.");
         }
     }
     @Override
-    public DTOResponseToken logout(UUID refreshToken) {
-        return repositoryToken.findByRefreshToken(refreshToken)
+    public TokenResponse logout(UUID refreshToken) {
+        return tokenRepository.findByRefreshToken(refreshToken)
                 .map(token -> {
-                    repositoryToken.deleteById(token.getId());
+                    tokenRepository.deleteById(token.getId());
                     return mapperToken.toResponse(token);
                 })
                 .orElseThrow(() ->
@@ -199,28 +198,28 @@ public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, Servic
 //            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or suspicious CAPTCHA");
 //        }
 //    }
-    public void addAttempt(DTORequestUserAuth dtoRequestUserAuth) {
-        User entity = repositoryUser.findByUsername(dtoRequestUserAuth.username()).orElseThrow(() -> new RuntimeException("Resource not found"));
+    public void addAttempt(UserAuthRequest userAuthRequest) {
+        User entity = userRepository.findByUsername(userAuthRequest.username()).orElseThrow(() -> new RuntimeException("Resource not found"));
         entity.setAttempt(entity.getAttempt() == null ? 0 : entity.getAttempt() + 1);
         if(entity.getAttempt() > 4) {
             entity.setActive(false);
-            repositoryUser.save(entity);
+            userRepository.save(entity);
             throw new DisabledException("User account has been disabled due to too many failed login attempts.");
         }
-        repositoryUser.save(entity);
+        userRepository.save(entity);
     }
     public void resetAttempts(String username) {
-        repositoryUser.findByUsername(username).ifPresent(user -> {
+        userRepository.findByUsername(username).ifPresent(user -> {
             user.setAttempt(0);
-            repositoryUser.save(user);
+            userRepository.save(user);
         });
     }
     public void validateTOTP(String userName, Integer secretKey) {
         log.info("Validating TOTP for user: {}", userName);
-        User user = repositoryUser.findByUsername(userName).orElseThrow(() -> new BadCredentialsException("User not found"));
+        User user = userRepository.findByUsername(userName).orElseThrow(() -> new BadCredentialsException("User not found"));
         String secret = user.getSecret();
         try {
-            secret = e2EE.decrypt(secret);
+            secret = encryptorService.decrypt(secret);
         } catch (Exception e) {
             throw new BadCredentialsException("Invalid secret");
         }
@@ -275,7 +274,7 @@ public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, Servic
                 "otpauth://totp/%s:%s?secret=%s&issuer=%s",
                 username,
                 username + "@forgepack.dev",
-                e2EE.decrypt(secret),
+                encryptorService.decrypt(secret),
                 "Forgepack"
         );
     }
@@ -307,8 +306,8 @@ public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, Servic
     }
     public User isValidToChange(UUID id) {
         // String currentUser = Information.getCurrentUser().orElse("Unknown User");
-        User user = repositoryUser.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new EntityNotFoundException("Resource not found"));
-        // User userCurrent = repositoryUser.findByUsername(currentUser).orElseThrow(() -> new EntityNotFoundException("Current user not found"));
+        User user = userRepository.findByIdAndDeletedAtIsNull(id).orElseThrow(() -> new EntityNotFoundException("Resource not found"));
+        // User userCurrent = userRepository.findByUsername(currentUser).orElseThrow(() -> new EntityNotFoundException("Current user not found"));
         // if ((userCurrent.getUsername() != null && user.getUsername() != null &&
         //         userCurrent.getUsername().equals(user.getUsername())) ||
         //         userCurrent.getRole().stream().anyMatch(role -> role.getName().equals("ADMIN"))) {
@@ -319,13 +318,13 @@ public class ServiceAuthenticationImpl implements ServiceUniqueCheckable, Servic
         // }
     }
     public User isValidToChange(String username) {
-        User user = repositoryUser.findByUsername(username.trim())
+        User user = userRepository.findByUsername(username.trim())
                 .orElseThrow(() -> new EntityNotFoundException("Resource not found"));
         // String currentUsername = Information.getCurrentUser().orElse(null);
         // if (currentUsername == null) {
         //     return user;
         // }
-        // User currentUser = repositoryUser.findByUsername(currentUsername)
+        // User currentUser = userRepository.findByUsername(currentUsername)
         //         .orElseThrow(() -> new EntityNotFoundException("Current user not found"));
         // boolean isSameUser = currentUser.getUsername().equalsIgnoreCase(user.getUsername());
         // boolean isAdmin   = currentUser.getRole().stream().anyMatch(role -> role.getName().equals("ADMIN"));

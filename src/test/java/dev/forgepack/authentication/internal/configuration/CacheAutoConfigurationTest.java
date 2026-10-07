@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import dev.forgepack.authorization.internal.model.Privilege;
 import dev.forgepack.authorization.internal.model.Role;
 import dev.forgepack.authorization.internal.model.User;
-import dev.forgepack.authorization.internal.repository.RepositoryUser;
+import dev.forgepack.authorization.internal.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,17 +23,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CacheConfigurationTest {
+class CacheAutoConfigurationTest {
 
     @Mock
-    private RepositoryUser repositoryUser;
+    private UserRepository userRepository;
 
     private CacheManager cacheManager;
 
     @BeforeEach
     void setUp() {
         CacheProperties cacheProperties = new CacheProperties(Duration.ofMinutes(10), Duration.ofMinutes(5), 10, 100);
-        CacheConfiguration configuration = new CacheConfiguration(repositoryUser, cacheProperties);
+        CacheAutoConfiguration configuration = new CacheAutoConfiguration(userRepository, cacheProperties);
         SimpleCacheManager manager = (SimpleCacheManager) configuration.cacheManager();
         // SimpleCacheManager only populates its lookup map once Spring invokes afterPropertiesSet(); trigger it manually here.
         manager.afterPropertiesSet();
@@ -52,7 +52,7 @@ class CacheConfigurationTest {
         Privilege privilege = new Privilege("READ_USER");
         Role role = new Role("ADMIN", Set.of(privilege));
         User user = new User("john", "john@forgepack.dev", new HashSet<>(Set.of(role)));
-        when(repositoryUser.findByUsername("john")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
 
         Object result = nativeCache(CacheConstants.ROLES_CACHE).get("john");
 
@@ -61,7 +61,7 @@ class CacheConfigurationTest {
 
     @Test
     void rolesCache_returnsEmptySetForMissingUser() {
-        when(repositoryUser.findByUsername("ghost")).thenReturn(Optional.empty());
+        when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
 
         Object result = nativeCache(CacheConstants.ROLES_CACHE).get("ghost");
 
@@ -73,7 +73,7 @@ class CacheConfigurationTest {
         Privilege privilege = new Privilege("READ_USER");
         Role role = new Role("ADMIN", Set.of(privilege));
         User user = new User("john", "john@forgepack.dev", new HashSet<>(Set.of(role)));
-        when(repositoryUser.findByUsername("john")).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
 
         Object result = nativeCache(CacheConstants.PERMISSIONS_CACHE).get("john");
 
@@ -82,7 +82,7 @@ class CacheConfigurationTest {
 
     @Test
     void permissionsCache_returnsEmptySetForMissingUser() {
-        when(repositoryUser.findByUsername("ghost")).thenReturn(Optional.empty());
+        when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
 
         Object result = nativeCache(CacheConstants.PERMISSIONS_CACHE).get("ghost");
 

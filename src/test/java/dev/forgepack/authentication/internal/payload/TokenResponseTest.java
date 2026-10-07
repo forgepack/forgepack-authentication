@@ -7,12 +7,12 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DTOResponseTokenTest {
+class TokenResponseTest {
 
     @Test
     void singleArgConstructor_setsRefreshTokenOnly() {
         UUID refreshToken = UUID.randomUUID();
-        DTOResponseToken response = new DTOResponseToken(refreshToken);
+        TokenResponse response = new TokenResponse(refreshToken);
 
         assertThat(response.getRefreshToken()).isEqualTo(refreshToken);
         assertThat(response.getAccessToken()).isNull();
@@ -24,7 +24,7 @@ class DTOResponseTokenTest {
     void fullConstructor_setsAllFields() {
         UUID refreshToken = UUID.randomUUID();
         Set<String> roles = Set.of("ROLE_ADMIN");
-        DTOResponseToken response = new DTOResponseToken("access-token", refreshToken, roles);
+        TokenResponse response = new TokenResponse("access-token", refreshToken, roles);
 
         assertThat(response.getAccessToken()).isEqualTo("access-token");
         assertThat(response.getRefreshToken()).isEqualTo(refreshToken);
@@ -34,7 +34,7 @@ class DTOResponseTokenTest {
     @Test
     void toString_containsFieldValues() {
         UUID refreshToken = UUID.randomUUID();
-        DTOResponseToken response = new DTOResponseToken("access-token", refreshToken, Set.of("ROLE_ADMIN"));
+        TokenResponse response = new TokenResponse("access-token", refreshToken, Set.of("ROLE_ADMIN"));
 
         String result = response.toString();
 

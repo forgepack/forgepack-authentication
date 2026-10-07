@@ -58,17 +58,17 @@ import java.util.UUID;
  *
  * @see org.springframework.hateoas.RepresentationModel
  */
-public class DTOResponseToken extends RepresentationModel<DTOResponseToken> {
+public class TokenResponse extends RepresentationModel<TokenResponse> {
 
     private final String tokenType = "Bearer ";
     private String accessToken;
     private final UUID refreshToken;
     private Set<String> role;
 
-    public DTOResponseToken(UUID refreshToken) {
+    public TokenResponse(UUID refreshToken) {
         this.refreshToken = refreshToken;
     }
-    public DTOResponseToken(String accessToken, UUID refreshToken, Set<String> role) {
+    public TokenResponse(String accessToken, UUID refreshToken, Set<String> role) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.role = role;

@@ -1,8 +1,8 @@
 package dev.forgepack.authentication.internal.mapper;
 
 import dev.forgepack.authentication.internal.model.Token;
-import dev.forgepack.authentication.internal.payload.DTORequestToken;
-import dev.forgepack.authentication.internal.payload.DTOResponseToken;
+import dev.forgepack.authentication.internal.payload.TokenRequest;
+import dev.forgepack.authentication.internal.payload.TokenResponse;
 import dev.forgepack.core.api.model.EntityCrud;
 import org.junit.jupiter.api.Test;
 
@@ -12,13 +12,13 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MapperTokenTest {
+class TokenMapperTest {
 
-    private final MapperToken mapper = newMapperToken();
+    private final TokenMapper mapper = newMapperToken();
 
-    private static MapperToken newMapperToken() {
+    private static TokenMapper newMapperToken() {
         try {
-            var constructor = MapperToken.class.getDeclaredConstructor();
+            var constructor = TokenMapper.class.getDeclaredConstructor();
             constructor.setAccessible(true);
             return constructor.newInstance();
         } catch (ReflectiveOperationException e) {
@@ -35,7 +35,7 @@ class MapperTokenTest {
     @Test
     void toEntity_mapsRefreshToken() {
         UUID refreshToken = UUID.randomUUID();
-        DTORequestToken dto = new DTORequestToken(null, "access-token", refreshToken);
+        TokenRequest dto = new TokenRequest(null, "access-token", refreshToken);
 
         Token entity = mapper.toEntity(dto);
 
@@ -53,7 +53,7 @@ class MapperTokenTest {
         UUID id = UUID.randomUUID();
         setId(token, id);
 
-        DTOResponseToken response = mapper.toResponse(token);
+        TokenResponse response = mapper.toResponse(token);
 
         assertThat(response.getRefreshToken()).isEqualTo(id);
     }
@@ -67,7 +67,7 @@ class MapperTokenTest {
     void updateEntity_updatesRefreshToken() {
         Token entity = new Token(UUID.randomUUID());
         UUID newRefreshToken = UUID.randomUUID();
-        DTORequestToken dto = new DTORequestToken(null, "access-token", newRefreshToken);
+        TokenRequest dto = new TokenRequest(null, "access-token", newRefreshToken);
 
         mapper.updateEntity(dto, entity);
 
@@ -89,7 +89,7 @@ class MapperTokenTest {
     @Test
     void toResponseSet_mapsAllEntities() {
         Token token = new Token(UUID.randomUUID());
-        Set<DTOResponseToken> result = mapper.toResponseSet(Set.of(token));
+        Set<TokenResponse> result = mapper.toResponseSet(Set.of(token));
         assertThat(result).hasSize(1);
     }
 }

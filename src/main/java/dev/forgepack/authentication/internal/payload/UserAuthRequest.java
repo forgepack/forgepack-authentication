@@ -64,7 +64,7 @@ import java.util.UUID;
  *
  * @see DTOIdentifiable
  */
-public record DTORequestUserAuth(
+public record UserAuthRequest(
 
         UUID id,
         @NotNull(message = "{not.null}") @NotBlank(message = "{not.blank}")

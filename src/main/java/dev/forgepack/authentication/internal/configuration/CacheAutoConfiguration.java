@@ -5,13 +5,13 @@ import com.github.benmanes.caffeine.cache.Caffeine;
 
 import dev.forgepack.authorization.internal.model.Privilege;
 import dev.forgepack.authorization.internal.model.Role;
-import dev.forgepack.authorization.internal.repository.RepositoryUser;
+import dev.forgepack.authorization.internal.repository.UserRepository;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,14 +31,14 @@ import java.util.stream.Collectors;
  * @author Marcelo Ribeiro Gadelha
  * @since 1.0
  */
-@Configuration
+@AutoConfiguration
 @EnableCaching
-public class CacheConfiguration {
-    private final RepositoryUser repositoryUser;
+public class CacheAutoConfiguration {
+    private final UserRepository userRepository;
     private final CacheProperties cacheProperties;
 
-    public CacheConfiguration(RepositoryUser repositoryUser, CacheProperties cacheProperties) {
-        this.repositoryUser = repositoryUser;
+    public CacheAutoConfiguration(UserRepository userRepository, CacheProperties cacheProperties) {
+        this.userRepository = userRepository;
         this.cacheProperties = cacheProperties;
     }
 
@@ -62,14 +62,14 @@ public class CacheConfiguration {
                         .build(key -> loader.load(key.toString())));
     }
     private Set<String> loadUserRoles(String username) {
-        return repositoryUser.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .map(user -> user.getRole().stream()
                         .map(Role::getName)
                         .collect(Collectors.toSet()))
                 .orElse(Collections.emptySet());
     }
     private Set<String> loadUserPermissions(String username) {
-        return repositoryUser.findByUsername(username)
+        return userRepository.findByUsername(username)
                 .map(user -> user.getRole().stream()
                         .flatMap(role -> role.getPrivilege().stream())
                         .map(Privilege::getName)

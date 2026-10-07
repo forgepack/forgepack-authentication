@@ -1,7 +1,7 @@
 package dev.forgepack.authentication.internal.service;
 
 import dev.forgepack.authentication.internal.model.CustomUserDetails;
-import dev.forgepack.authorization.internal.repository.RepositoryUser;
+import dev.forgepack.authorization.internal.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -16,18 +16,18 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ServiceCustomUserDetailsTest {
+class CustomUserDetailsServiceTest {
 
     @Mock
-    private RepositoryUser repositoryUser;
+    private UserRepository userRepository;
 
     @Test
     void loadUserByUsername_found_returnsUserDetails() {
         CustomUserDetails customUserDetails = new CustomUserDetails();
         customUserDetails.setUsername("john");
-        when(repositoryUser.findByUsername("john")).thenReturn(Optional.of(customUserDetails));
+        when(userRepository.findByUsername("john")).thenReturn(Optional.of(customUserDetails));
 
-        ServiceCustomUserDetails service = new ServiceCustomUserDetails(repositoryUser);
+        CustomUserDetailsService service = new CustomUserDetailsService(userRepository);
         UserDetails result = service.loadUserByUsername("john");
 
         assertThat(result).isSameAs(customUserDetails);
@@ -35,9 +35,9 @@ class ServiceCustomUserDetailsTest {
 
     @Test
     void loadUserByUsername_notFound_throwsUsernameNotFoundException() {
-        when(repositoryUser.findByUsername("ghost")).thenReturn(Optional.empty());
+        when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
 
-        ServiceCustomUserDetails service = new ServiceCustomUserDetails(repositoryUser);
+        CustomUserDetailsService service = new CustomUserDetailsService(userRepository);
 
         assertThatThrownBy(() -> service.loadUserByUsername("ghost"))
                 .isInstanceOf(UsernameNotFoundException.class);

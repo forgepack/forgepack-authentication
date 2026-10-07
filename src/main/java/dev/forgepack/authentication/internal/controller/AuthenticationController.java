@@ -1,11 +1,11 @@
 package dev.forgepack.authentication.internal.controller;
 
-import dev.forgepack.authentication.internal.payload.DTORequestToken;
-import dev.forgepack.authentication.internal.payload.DTOResponseToken;
-import dev.forgepack.authentication.internal.service.ServiceAuthenticationImpl;
-import dev.forgepack.authentication.internal.payload.DTORequestUserAuth;
-import dev.forgepack.authorization.internal.service.ServiceUser;
-import dev.forgepack.authorization.internal.payload.DTOResponseUser;
+import dev.forgepack.authentication.internal.payload.TokenRequest;
+import dev.forgepack.authentication.internal.payload.TokenResponse;
+import dev.forgepack.authentication.internal.service.AuthenticationServiceImpl;
+import dev.forgepack.authentication.internal.payload.UserAuthRequest;
+import dev.forgepack.authorization.internal.service.UserService;
+import dev.forgepack.authorization.internal.payload.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,17 +36,17 @@ import java.util.UUID;
  * @author Marcelo Ribeiro Gadelha
  * @since 1.0
  *
- * @see ServiceAuthenticationImpl
- * @see ServiceUser
+ * @see AuthenticationServiceImpl
+ * @see UserService
  */
 @RestController
 @RequestMapping("/auth")
-public class ControllerAuthentication {
+public class AuthenticationController {
 
-    private final ServiceAuthenticationImpl serviceAuthenticationImpl;
-    private final ServiceUser serviceUser;
+    private final AuthenticationServiceImpl serviceAuthenticationImpl;
+    private final UserService serviceUser;
 
-    public ControllerAuthentication(ServiceAuthenticationImpl serviceAuthenticationImpl, ServiceUser serviceUser) {
+    public AuthenticationController(AuthenticationServiceImpl serviceAuthenticationImpl, UserService serviceUser) {
         this.serviceAuthenticationImpl = serviceAuthenticationImpl;
         this.serviceUser = serviceUser;
     }
@@ -55,63 +55,63 @@ public class ControllerAuthentication {
      * Authenticates the user and issues a new token pair.
      *
      * @param value the authentication request containing username, password, and two-factor secret
-     * @return {@code 200 OK} with the generated {@link DTOResponseToken}
+     * @return {@code 200 OK} with the generated {@link TokenResponse}
      */
     @PostMapping("/login")
-    public ResponseEntity<DTOResponseToken> login(@RequestBody @Valid DTORequestUserAuth value){
+    public ResponseEntity<TokenResponse> login(@RequestBody @Valid UserAuthRequest value){
         return ResponseEntity.ok().body(serviceAuthenticationImpl.login(value));
     }
     /**
      * Refreshes the token pair using a valid refresh token.
      *
      * @param value the token request containing the current refresh token
-     * @return {@code 200 OK} with the new {@link DTOResponseToken}
+     * @return {@code 200 OK} with the new {@link TokenResponse}
      */
     @PostMapping("/refresh")
-    public ResponseEntity<DTOResponseToken> refresh(@RequestBody @Valid DTORequestToken value){
+    public ResponseEntity<TokenResponse> refresh(@RequestBody @Valid TokenRequest value){
         return ResponseEntity.accepted().body(serviceAuthenticationImpl.refresh(value));
     }
     /**
      * Invalidates the given refresh token, effectively logging the user out.
      *
      * @param refreshToken the UUID of the refresh token to be revoked
-     * @return {@code 202 Accepted} with the invalidated {@link DTOResponseToken}
+     * @return {@code 202 Accepted} with the invalidated {@link TokenResponse}
      */
     @DeleteMapping("/logout/{refreshToken}")
-    public ResponseEntity<DTOResponseToken> logout(@PathVariable("refreshToken") UUID refreshToken) {
+    public ResponseEntity<TokenResponse> logout(@PathVariable("refreshToken") UUID refreshToken) {
         return ResponseEntity.accepted().body(serviceAuthenticationImpl.logout(refreshToken));
     }
     /**
      * Changes the password of the authenticated user.
      *
      * @param updated the request containing the username and new password
-     * @return {@code 202 Accepted} with the updated {@link DTOResponseUser}
+     * @return {@code 202 Accepted} with the updated {@link UserResponse}
      */
     @PutMapping("/changePassword")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER')")
-    public ResponseEntity<DTOResponseUser> changePassword(@RequestBody @Valid DTORequestUserAuth updated){
+    public ResponseEntity<UserResponse> changePassword(@RequestBody @Valid UserAuthRequest updated){
         return ResponseEntity.accepted().body(serviceAuthenticationImpl.changePassword(updated));
     }
     /**
      * Resets the password of the user identified by the provided username.
      *
      * @param updated the request containing the target username
-     * @return {@code 202 Accepted} with the updated {@link DTOResponseUser}
+     * @return {@code 202 Accepted} with the updated {@link UserResponse}
      */
     @PutMapping("/resetPassword")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER', 'VIEWER')")
-    public ResponseEntity<DTOResponseUser> resetPassword(@RequestBody DTORequestUserAuth updated) {
+    public ResponseEntity<UserResponse> resetPassword(@RequestBody UserAuthRequest updated) {
         return ResponseEntity.accepted().body(serviceAuthenticationImpl.resetPassword(updated.username()));
     }
     /**
      * Resets the two-factor authentication secret of the user identified by the provided username.
      *
      * @param updated the request containing the target username
-     * @return {@code 202 Accepted} with the updated {@link DTOResponseUser}
+     * @return {@code 202 Accepted} with the updated {@link UserResponse}
      */
     @PutMapping("/resetSecret")
 //    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER', 'VIEWER')")
-    public ResponseEntity<DTOResponseUser> resetSecret(@RequestBody DTORequestUserAuth updated) {
+    public ResponseEntity<UserResponse> resetSecret(@RequestBody UserAuthRequest updated) {
         return ResponseEntity.accepted().body(serviceAuthenticationImpl.resetSecret(updated.username()));
     }
 }

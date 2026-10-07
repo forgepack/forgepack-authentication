@@ -6,12 +6,12 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DTORequestUserAuthTest {
+class UserAuthRequestTest {
 
     @Test
     void constructor_setsAllFields() {
         UUID id = UUID.randomUUID();
-        DTORequestUserAuth dto = new DTORequestUserAuth(id, "john", "Password1!", 123456);
+        UserAuthRequest dto = new UserAuthRequest(id, "john", "Password1!", 123456);
 
         assertThat(dto.id()).isEqualTo(id);
         assertThat(dto.username()).isEqualTo("john");
@@ -22,8 +22,8 @@ class DTORequestUserAuthTest {
     @Test
     void equalsAndHashCode_areRecordBased() {
         UUID id = UUID.randomUUID();
-        DTORequestUserAuth first = new DTORequestUserAuth(id, "john", "Password1!", 123456);
-        DTORequestUserAuth second = new DTORequestUserAuth(id, "john", "Password1!", 123456);
+        UserAuthRequest first = new UserAuthRequest(id, "john", "Password1!", 123456);
+        UserAuthRequest second = new UserAuthRequest(id, "john", "Password1!", 123456);
 
         assertThat(first).isEqualTo(second);
         assertThat(first.hashCode()).isEqualTo(second.hashCode());
