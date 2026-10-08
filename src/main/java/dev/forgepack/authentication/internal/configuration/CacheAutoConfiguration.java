@@ -7,6 +7,11 @@ import dev.forgepack.authorization.internal.model.Privilege;
 import dev.forgepack.authorization.internal.model.Role;
 import dev.forgepack.authorization.internal.repository.UserRepository;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCache;
@@ -31,8 +36,17 @@ import java.util.stream.Collectors;
  * @author Marcelo Ribeiro Gadelha
  * @since 1.0
  */
-@AutoConfiguration
+@AutoConfiguration(afterName = {
+        "org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration",
+        "org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration",
+        "org.springframework.boot.data.jpa.autoconfigure.DataJpaRepositoriesAutoConfiguration",
+        "org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration"
+})
 @EnableCaching
+@EnableConfigurationProperties({ CacheProperties.class, JwtProperties.class })
+@AutoConfigurationPackage(basePackages = "dev.forgepack.authentication")
+@ComponentScan(basePackages = "dev.forgepack.authentication",
+        excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CacheAutoConfiguration.class))
 public class CacheAutoConfiguration {
     private final UserRepository userRepository;
     private final CacheProperties cacheProperties;
@@ -43,6 +57,7 @@ public class CacheAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(CacheManager.class)
     public CacheManager cacheManager() {
         SimpleCacheManager cacheManager = new SimpleCacheManager();
         cacheManager.setCaches(Arrays.asList(
