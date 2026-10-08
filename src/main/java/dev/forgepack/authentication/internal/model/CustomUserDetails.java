@@ -15,7 +15,7 @@ public class CustomUserDetails extends User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> authorities = new HashSet<>();
-        for (Role r : new CustomUserDetails().getRole()) {
+        for (Role r : getRole()) {
             authorities.add(new SimpleGrantedAuthority(r.getName()));
             r.getPrivilege().forEach(p ->
                     authorities.add(new SimpleGrantedAuthority(p.getName())));
@@ -24,8 +24,8 @@ public class CustomUserDetails extends User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonLocked() { return new CustomUserDetails().getAttempt() == null || new CustomUserDetails().getAttempt() < 5; }
+    public boolean isAccountNonLocked() { return getAttempt() == null || getAttempt() < 5; }
 
     @Override
-    public boolean isEnabled() { return Boolean.TRUE.equals(new CustomUserDetails().getActive()); }
+    public boolean isEnabled() { return Boolean.TRUE.equals(getActive()); }
 }
