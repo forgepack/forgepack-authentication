@@ -52,7 +52,7 @@
 			<version>0.0.12</version>
 		</dependency>
 
-        <!-- Forgepack: authorization -->
+        <!-- Forgepack: utilsS -->
         <dependency>
             <groupId>dev.forgepack</groupId>
             <artifactId>forgepack-utils</artifactId>
