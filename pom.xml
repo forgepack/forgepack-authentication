@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>dev.forgepack</groupId>
 	<artifactId>forgepack-authentication</artifactId>
-	<version>0.0.10</version>
+	<version>0.0.11</version>
 	<name>Forgepack Authentication Library</name>
 	<description>Authentication flow: login, logout, refresh token, password change, TOTP/2FA</description>
 	<url>https://github.com/orgs/forgepack/forgepack-authentication</url>
@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>dev.forgepack</groupId>
 			<artifactId>forgepack-authorization</artifactId>
-			<version>0.0.12</version>
+			<version>0.0.13</version>
 		</dependency>
 
         <!-- Forgepack: utils -->
