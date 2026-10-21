@@ -1,1 +1,2 @@
 dev.forgepack.authentication.internal.configuration.CacheAutoConfiguration
+dev.forgepack.authentication.internal.configuration.AuthenticationAutoConfiguration

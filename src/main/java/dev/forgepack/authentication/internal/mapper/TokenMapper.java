@@ -4,14 +4,12 @@ import dev.forgepack.core.api.mapper.Mapper;
 import dev.forgepack.authentication.internal.model.Token;
 import dev.forgepack.authentication.internal.payload.TokenRequest;
 import dev.forgepack.authentication.internal.payload.TokenResponse;
-import org.springframework.stereotype.Component;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Component
 public final class TokenMapper implements Mapper<Token, TokenRequest, TokenResponse> {
 
-    private TokenMapper() {}
+    public TokenMapper() {}
 
     @Override
     public Token toEntity(TokenRequest dto) {

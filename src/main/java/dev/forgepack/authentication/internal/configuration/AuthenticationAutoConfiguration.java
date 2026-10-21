@@ -1,5 +1,11 @@
 package dev.forgepack.authentication.internal.configuration;
 
+import dev.forgepack.authentication.internal.mapper.TokenMapper;
+import dev.forgepack.authentication.internal.model.Token;
+import dev.forgepack.authentication.internal.payload.TokenRequest;
+import dev.forgepack.authentication.internal.payload.TokenResponse;
+import dev.forgepack.authentication.internal.service.CustomUserDetailsService;
+import dev.forgepack.core.api.mapper.Mapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -9,10 +15,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import dev.forgepack.authentication.internal.service.CustomUserDetailsService;
 
 @AutoConfiguration
 public class AuthenticationAutoConfiguration {
+
+    @Bean
+    @ConditionalOnMissingBean(TokenMapper.class)
+    Mapper<Token, TokenRequest, TokenResponse> tokenMapper() {
+        return new TokenMapper();
+    }
 
     @Bean
     @ConditionalOnMissingBean(PasswordEncoder.class)
