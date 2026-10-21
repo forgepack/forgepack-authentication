@@ -17,8 +17,8 @@ import dev.forgepack.authentication.internal.payload.UserAuthRequest;
 import dev.forgepack.authentication.internal.payload.TokenResponse;
 import dev.forgepack.authentication.internal.repository.TokenRepository;
 import dev.forgepack.utils.api.service.EncryptorService;
-import dev.forgepack.utils.internal.service.EmailServiceImpl;
-import dev.forgepack.utils.internal.service.EncryptorServiceImpl;
+import dev.forgepack.utils.api.service.EmailService;
+// import dev.forgepack.utils.internal.service.EncryptorServiceImpl;
 import dev.forgepack.utils.internal.utils.QRCode;
 import dev.forgepack.validation.api.service.UniqueCheckableService;
 import jakarta.persistence.EntityNotFoundException;
@@ -61,13 +61,13 @@ public class AuthenticationServiceImpl implements UniqueCheckableService, Authen
     private final UserRepository userRepository;
     private final RoleRepository repositoryRole;
     private final PasswordEncoder passwordEncoder;
-    private final EmailServiceImpl emailService;
+    private final EmailService emailService;
     private final Mapper<Token, TokenRequest, TokenResponse> mapperToken;
     private final Mapper<User, UserRequest, UserResponse> mapperUser;
     private final CustomUserDetailsService customUserDetailsService;
     private static final Logger log = LoggerFactory.getLogger(AuthenticationServiceImpl.class);
 
-    public AuthenticationServiceImpl(EncryptorService encryptorService, AuthenticationManager authenticationManager, JwtConfiguration jwtConfiguration, TokenRepository tokenRepository, UserRepository userRepository, RoleRepository repositoryRole, PasswordEncoder passwordEncoder, EmailServiceImpl emailService, Mapper<Token, TokenRequest, TokenResponse> mapperToken, Mapper<User, UserRequest, UserResponse> mapperUser, CustomUserDetailsService customUserDetailsService) {
+    public AuthenticationServiceImpl(EncryptorService encryptorService, AuthenticationManager authenticationManager, JwtConfiguration jwtConfiguration, TokenRepository tokenRepository, UserRepository userRepository, RoleRepository repositoryRole, PasswordEncoder passwordEncoder, EmailService emailService, Mapper<Token, TokenRequest, TokenResponse> mapperToken, Mapper<User, UserRequest, UserResponse> mapperUser, CustomUserDetailsService customUserDetailsService) {
         this.encryptorService = encryptorService;
         this.authenticationManager = authenticationManager;
         this.jwtConfiguration = jwtConfiguration;
