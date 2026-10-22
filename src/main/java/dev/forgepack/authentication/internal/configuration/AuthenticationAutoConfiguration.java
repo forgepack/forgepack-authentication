@@ -5,6 +5,10 @@ import dev.forgepack.authentication.internal.model.Token;
 import dev.forgepack.authentication.internal.payload.TokenRequest;
 import dev.forgepack.authentication.internal.payload.TokenResponse;
 import dev.forgepack.authentication.internal.service.CustomUserDetailsService;
+// import dev.forgepack.authorization.internal.mapper.UserMapper;
+// import dev.forgepack.authorization.internal.model.User;
+// import dev.forgepack.authorization.internal.payload.UserRequest;
+// import dev.forgepack.authorization.internal.payload.UserResponse;
 import dev.forgepack.core.api.mapper.Mapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,6 +28,12 @@ public class AuthenticationAutoConfiguration {
     Mapper<Token, TokenRequest, TokenResponse> tokenMapper() {
         return new TokenMapper();
     }
+
+    // @Bean
+    // @ConditionalOnMissingBean(UserMapper.class)
+    // Mapper<User, UserRequest, UserResponse> userMapper() {
+    //     return new UserMapper();
+    // }
 
     @Bean
     @ConditionalOnMissingBean(PasswordEncoder.class)
